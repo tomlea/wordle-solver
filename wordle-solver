@@ -100,7 +100,12 @@ RESPONSE_MAP = {
 until game.won?
   prompt.warn("There are currently #{game.possible_words.size} possible words")
   mode = game.exploration_mode? ? :exploration : :refinement
-  guess = prompt.select "Pick a word (#{mode} mode)", game.best_guesses.compact
+  options = game.best_guesses
+  if options.empty?
+    prompt.error("No words remain. I have failed you")
+    exit 1
+  end
+  guess = prompt.select "Pick a word (#{mode} mode)", options
   result = prompt.ask('How did that go?', validate: /\A[ynm]{5}\Z/)
 
   next unless result
